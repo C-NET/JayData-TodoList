@@ -3,7 +3,15 @@
 })();
 
 function onDeviceReady() {
-    $("#todoList").append("ready");
+    $("#message").append("ready");
+    $todo.context = new $todo.Types.ToDoContext({ name: 'webSql', databaseName: 'todo' });
+    $todo.context.onReady({
+        success: updateView,
+        error: function () {
+            $todo.context = null;
+            updateView();
+        }
+    });
 }
 
 $(document).ready(function () {
@@ -20,16 +28,16 @@ $(document).ready(function () {
         TodoEntries: { type: $data.EntitySet, elementType: $todo.Types.ToDoEntry }
     });
 
-    $('#btnAdd').click(function () {
-        $('#message').append("btnAdd");
-        var value = $('#txtNew').val();
-        if (!value) return;
-        var now = new Date();
-        //JayData code begins here
-        var entity = new $todo.Types.ToDoEntry({ Value: value, CreatedAt: now, ModifiedAt: now });
-        $todo.context.TodoEntries.add(entity);
-        $todo.context.saveChanges(updateView);
-    });
+    //$('#btnAdd').click(function () {
+    //    $('#message').append("btnAdd");
+    //    var value = $('#txtNew').val();
+    //    if (!value) return;
+    //    var now = new Date();
+    //    //JayData code begins here
+    //    var entity = new $todo.Types.ToDoEntry({ Value: value, CreatedAt: now, ModifiedAt: now });
+    //    $todo.context.TodoEntries.add(entity);
+    //    $todo.context.saveChanges(updateView);
+    //});
 
     //$('#btnClear').click(function () {
     //    $('#todoList > div').each(function () {
@@ -122,6 +130,7 @@ $(document).ready(function () {
 //});
 
 function updateView() {
+    $("#message").append("updateView");
     if ($todo.context) {
         $('#wrapper>div:not(#providerSelection)').show();
         $todo.context.TodoEntries.toArray(function (items) {
