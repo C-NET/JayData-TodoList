@@ -31,29 +31,29 @@ $(document).ready(function () {
         $todo.context.saveChanges(updateView);
     });
 
-    $('#btnClear').click(function () {
-        $('#todoList > div').each(function () {
-            var entity = $(this).data('entity');
-            $todo.context.TodoEntries.remove(entity);
-        });
-        $todo.context.saveChanges(updateView);
-    });
+    //$('#btnClear').click(function () {
+    //    $('#todoList > div').each(function () {
+    //        var entity = $(this).data('entity');
+    //        $todo.context.TodoEntries.remove(entity);
+    //    });
+    //    $todo.context.saveChanges(updateView);
+    //});
 
-    $('#todoList').on('click', ':button', function (e) {
-        var cmd = $(this).val();
-        var entry = $(this).parent().data('entity');
-        switch (cmd) {
-            case 'undone':
-            case 'done':
-                $todo.context.TodoEntries.attach(entry);
-                entry.Done = (cmd == 'done');
-                break;
-            case 'delete':
-                $todo.context.TodoEntries.remove(entry);
-                break;
-        }
-        $todo.context.saveChanges(updateView);
-    });
+    //$('#todoList').on('click', ':button', function (e) {
+    //    var cmd = $(this).val();
+    //    var entry = $(this).parent().data('entity');
+    //    switch (cmd) {
+    //        case 'undone':
+    //        case 'done':
+    //            $todo.context.TodoEntries.attach(entry);
+    //            entry.Done = (cmd == 'done');
+    //            break;
+    //        case 'delete':
+    //            $todo.context.TodoEntries.remove(entry);
+    //            break;
+    //    }
+    //    $todo.context.saveChanges(updateView);
+    //});
 
 });
 
