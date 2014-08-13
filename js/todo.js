@@ -8,7 +8,7 @@ function onDeviceReady() {
 
 $(document).ready(function () {
     $('#btnAdd').click(function () {
-        $('#todoList').append("btnAdd");
+        $('#message').append("btnAdd");
     });
 });
 
