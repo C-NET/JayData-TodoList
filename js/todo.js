@@ -4,14 +4,6 @@
 
 function onDeviceReady() {
     $("#message").append("ready");
-    $todo.context = new $todo.Types.ToDoContext({ name: 'webSql', databaseName: 'todo' });
-    $todo.context.onReady({
-        success: updateView,
-        error: function () {
-            $todo.context = null;
-            updateView();
-        }
-    });
 }
 
 $(document).ready(function () {
@@ -26,6 +18,17 @@ $(document).ready(function () {
 
     $data.EntityContext.extend('$todo.Types.ToDoContext', {
         TodoEntries: { type: $data.EntitySet, elementType: $todo.Types.ToDoEntry }
+    });
+
+    $('#btnLoadContext').click(function () {
+        $todo.context = new $todo.Types.ToDoContext({ name: 'webSql', databaseName: 'todo' });
+        $todo.context.onReady({
+            success: updateView,
+            error: function () {
+                $todo.context = null;
+                updateView();
+            }
+        });
     });
 
     //$('#btnAdd').click(function () {
