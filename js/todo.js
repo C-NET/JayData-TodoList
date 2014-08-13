@@ -4,6 +4,14 @@
 
 function onDeviceReady() {
     $("#message").append("ready");
+    $todo.context = new $todo.Types.ToDoContext({ name: 'webSql', databaseName: 'todo' });
+    $todo.context.onReady({
+        success: updateView,
+        error: function () {
+            $todo.context = null;
+            updateView();
+        }
+    });
 }
 
 $(document).ready(function () {
@@ -20,51 +28,51 @@ $(document).ready(function () {
         TodoEntries: { type: $data.EntitySet, elementType: $todo.Types.ToDoEntry }
     });
 
-    $('#btnLoadContext').click(function () {
-        $todo.context = new $todo.Types.ToDoContext({ name: 'webSql', databaseName: 'todo' });
-        $todo.context.onReady({
-            success: updateView,
-            error: function () {
-                $todo.context = null;
-                updateView();
-            }
-        });
+    //$('#btnLoadContext').click(function () {
+    //    $todo.context = new $todo.Types.ToDoContext({ name: 'webSql', databaseName: 'todo' });
+    //    $todo.context.onReady({
+    //        success: updateView,
+    //        error: function () {
+    //            $todo.context = null;
+    //            updateView();
+    //        }
+    //    });
+    //});
+
+    $('#btnAdd').click(function () {
+        $('#message').append("btnAdd");
+        var value = $('#txtNew').val();
+        if (!value) return;
+        var now = new Date();
+        //JayData code begins here
+        var entity = new $todo.Types.ToDoEntry({ Value: value, CreatedAt: now, ModifiedAt: now });
+        $todo.context.TodoEntries.add(entity);
+        $todo.context.saveChanges(updateView);
     });
 
-    //$('#btnAdd').click(function () {
-    //    $('#message').append("btnAdd");
-    //    var value = $('#txtNew').val();
-    //    if (!value) return;
-    //    var now = new Date();
-    //    //JayData code begins here
-    //    var entity = new $todo.Types.ToDoEntry({ Value: value, CreatedAt: now, ModifiedAt: now });
-    //    $todo.context.TodoEntries.add(entity);
-    //    $todo.context.saveChanges(updateView);
-    //});
+    $('#btnClear').click(function () {
+        $('#todoList > div').each(function () {
+            var entity = $(this).data('entity');
+            $todo.context.TodoEntries.remove(entity);
+        });
+        $todo.context.saveChanges(updateView);
+    });
 
-    //$('#btnClear').click(function () {
-    //    $('#todoList > div').each(function () {
-    //        var entity = $(this).data('entity');
-    //        $todo.context.TodoEntries.remove(entity);
-    //    });
-    //    $todo.context.saveChanges(updateView);
-    //});
-
-    //$('#todoList').on('click', ':button', function (e) {
-    //    var cmd = $(this).val();
-    //    var entry = $(this).parent().data('entity');
-    //    switch (cmd) {
-    //        case 'undone':
-    //        case 'done':
-    //            $todo.context.TodoEntries.attach(entry);
-    //            entry.Done = (cmd == 'done');
-    //            break;
-    //        case 'delete':
-    //            $todo.context.TodoEntries.remove(entry);
-    //            break;
-    //    }
-    //    $todo.context.saveChanges(updateView);
-    //});
+    $('#todoList').on('click', ':button', function (e) {
+        var cmd = $(this).val();
+        var entry = $(this).parent().data('entity');
+        switch (cmd) {
+            case 'undone':
+            case 'done':
+                $todo.context.TodoEntries.attach(entry);
+                entry.Done = (cmd == 'done');
+                break;
+            case 'delete':
+                $todo.context.TodoEntries.remove(entry);
+                break;
+        }
+        $todo.context.saveChanges(updateView);
+    });
 
 });
 
