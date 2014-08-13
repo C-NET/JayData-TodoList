@@ -10,6 +10,19 @@ $(document).ready(function () {
     $('#btnAdd').click(function () {
         $('#message').append("btnAdd");
     });
+
+    $data.Entity.extend('$todo.Types.ToDoEntry', {
+        Id: { type: 'int', key: true, computed: true },
+        Value: { type: 'string' },
+        CreatedAt: { type: 'datetime' },
+        ModifiedAt: { type: 'datetime' },
+        Done: { type: 'bool' }
+    });
+
+    $data.EntityContext.extend('$todo.Types.ToDoContext', {
+        TodoEntries: { type: $data.EntitySet, elementType: $todo.Types.ToDoEntry }
+    });
+
 });
 
 
@@ -90,14 +103,5 @@ function updateView() {
     }
 }
 
-//function addTodo() {
-//    $('#todoList').append("AddButton");
-//    var value = $('#txtNew').val();
-//    if (!value) return;
-//    var now = new Date();
-//    //JayData code begins here
-//    var entity = new $todo.Types.ToDoEntry({ Value: value, CreatedAt: now, ModifiedAt: now });
-//    $todo.context.TodoEntries.add(entity);
-//    $todo.context.saveChanges(updateView);
-//}
+
 
