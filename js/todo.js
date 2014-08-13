@@ -7,9 +7,6 @@ function onDeviceReady() {
 }
 
 $(document).ready(function () {
-    $('#btnAdd').click(function () {
-        $('#message').append("btnAdd");
-    });
 
     $data.Entity.extend('$todo.Types.ToDoEntry', {
         Id: { type: 'int', key: true, computed: true },
@@ -21,6 +18,41 @@ $(document).ready(function () {
 
     $data.EntityContext.extend('$todo.Types.ToDoContext', {
         TodoEntries: { type: $data.EntitySet, elementType: $todo.Types.ToDoEntry }
+    });
+
+    $('#btnAdd').click(function () {
+        $('#message').append("btnAdd");
+        var value = $('#txtNew').val();
+        if (!value) return;
+        var now = new Date();
+        //JayData code begins here
+        var entity = new $todo.Types.ToDoEntry({ Value: value, CreatedAt: now, ModifiedAt: now });
+        $todo.context.TodoEntries.add(entity);
+        $todo.context.saveChanges(updateView);
+    });
+
+    $('#btnClear').click(function () {
+        $('#todoList > div').each(function () {
+            var entity = $(this).data('entity');
+            $todo.context.TodoEntries.remove(entity);
+        });
+        $todo.context.saveChanges(updateView);
+    });
+
+    $('#todoList').on('click', ':button', function (e) {
+        var cmd = $(this).val();
+        var entry = $(this).parent().data('entity');
+        switch (cmd) {
+            case 'undone':
+            case 'done':
+                $todo.context.TodoEntries.attach(entry);
+                entry.Done = (cmd == 'done');
+                break;
+            case 'delete':
+                $todo.context.TodoEntries.remove(entry);
+                break;
+        }
+        $todo.context.saveChanges(updateView);
     });
 
 });
