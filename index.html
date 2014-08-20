@@ -26,7 +26,7 @@
     <!--<link rel="stylesheet" type="text/css" href="css/index.css" />-->
     <style type="text/css">
         body, input, button {
-            font-size: 2em;
+            font-size: 1.5em;
         }
     </style>
     <meta name="msapplication-tap-highlight" content="no" />
@@ -35,24 +35,34 @@
     <script type="text/javascript" src="phonegap.js"></script>
     <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
+    <script type="text/javascript" src="js/datajs-1.0.3.js"></script>
     <script type="text/javascript" src="js/jaydata.js"></script>
-    <script type="text/javascript" src="jaydataproviders/SqLiteProvider.js"></script>
+    <!--    <script type="text/javascript" src="jaydataproviders/SqLiteProvider.js"></script>
+    <script type="text/javascript" src="jaydataproviders/oDataProvider.js"></script>-->
     <script type="text/javascript" src="js/todo.js"></script>
 
     <script id="todoEntryTemplate" type="text/html">
         <div class="todoEntry row clear margin10">
             <div class="fleft iblock span4">
-                <label>${Value }</label>
+                <label>${Data }</label>
             </div>
             {{if Done}}
             <button value="undone" class="btn btn-small btn-inverse tshadow">Undone</button>
             {{else}}
             <button value="done" class="btn btn-small btn-success tshadow">Done</button>
             {{/if}}
-		
             <button value="delete" class="btn btn-small btn-danger tshadow">Delete</button>
         </div>
     </script>
+
+    <script id="remoteListTemplate" type="text/html">
+        <div class="todoEntry row clear margin10">
+            <div class="fleft iblock span4">
+                <label>${Data }</label>
+            </div>
+        </div>
+    </script>
+
 </head>
 <body>
 
@@ -61,8 +71,12 @@
         <button id="btnAdd" class="btn btn-small">Add</button>
         <button id="btnClear" class="btn btn-small">Clear</button>
     </div>
-    <div id="todoList"></div>
     <div id="message"></div>
+    <div>Lista Local</div>
+    <div id="todoList"></div>
+    <div><a href="#" id="sync">Synchronize</a></div>
+    <div>Lista Remota</div>
+    <div id="remoteList"></div>
     <!-- <div class="app">
             <h1>Apache Cordova</h1>
             <div id="deviceready" class="blink">
