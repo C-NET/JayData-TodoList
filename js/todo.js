@@ -20,7 +20,7 @@ function onDeviceReady() {
 
     onlinedb = new $todo.Types.ToDoContext({
         name: 'oData',
-        oDataServiceHost: 'http://localhost:50500/OnlineDB.svc'
+        oDataServiceHost: 'http://localhost:49375/odata'
     });
     onlinedb.onReady({
         success: updateViewRemote,
@@ -39,19 +39,16 @@ function onDeviceReady() {
 $(document).ready(function () {
 
     $data.Entity.extend('$todo.Types.ToDoEntry', {
-        'Id': { 'key': true, 'type': 'Edm.Guid', 'nullable': false, 'required': true },
+        'Id': { 'key': true, 'type': 'Edm.Guid', 'nullable': false, 'required': false },
         'Data': { 'type': 'Edm.String', 'nullable': false, 'required': true },
-        'Synchronized': { 'type': 'Edm.Boolean', 'nullable': false, 'required': true },
-        'CreationDate': { 'type': 'Edm.DateTime', 'nullable': false, 'required': true },
-        //Id: { type: 'int', key: true, computed: true },
-        //'Value': { 'type': 'Edm.String', 'nullable': true, 'required': false },
-        //'CreatedAt': { 'type': 'Edm.DateTime', 'nullable': true, 'required': false },
-        //'ModifiedAt': { 'type': 'Edm.DateTime', 'nullable': true, 'required': false },
-        //'Done': { 'type': 'Edm.Boolean', 'nullable': true, 'required': false }
+        'Synchronized': { 'type': 'Edm.Boolean', 'nullable': true, 'required': false },
+        'CreationDateTime': { 'type': 'Edm.DateTime', 'nullable': true, 'required': false },
+        'ModificationDateTime': { 'type': 'Edm.DateTime', 'nullable': true, 'required': false },
+        'Done': { 'type': 'Edm.Boolean', 'nullable': true, 'required': false }
     });
 
     $data.EntityContext.extend('$todo.Types.ToDoContext', {
-        ItemsSet: { type: $data.EntitySet, elementType: $todo.Types.ToDoEntry }
+        Todo: { type: $data.EntitySet, elementType: $todo.Types.ToDoEntry }
     });
 
     $('#btnAdd').click(function () {
@@ -59,15 +56,15 @@ $(document).ready(function () {
         if (!value) return;
         var now = new Date();
         //JayData code begins here
-        var entity = new $todo.Types.ToDoEntry({ Id: $data.createGuid(), Data: value, Synchronized: false, CreationDate: now });
-        $todo.context.ItemsSet.add(entity);
+        var entity = new $todo.Types.ToDoEntry({ Id: $data.createGuid(), Data: value, Synchronized: false, CreationDateTime: now, ModificationDateTime: now, Done: false });
+        $todo.context.Todo.add(entity);
         $todo.context.saveChanges(updateView);
     });
 
     $('#btnClear').click(function () {
         $('#todoList > div').each(function () {
             var entity = $(this).data('entity');
-            $todo.context.ItemsSet.remove(entity);
+            $todo.context.Todo.remove(entity);
         });
         $todo.context.saveChanges(updateView);
     });
@@ -78,11 +75,11 @@ $(document).ready(function () {
         switch (cmd) {
             case 'undone':
             case 'done':
-                $todo.context.ItemsSet.attach(entry);
-                //entry.Done = (cmd == 'done');
+                $todo.context.Todo.attach(entry);
+                entry.Done = (cmd == 'done');
                 break;
             case 'delete':
-                $todo.context.ItemsSet.remove(entry);
+                $todo.context.Todo.remove(entry);
                 break;
         }
         $todo.context.saveChanges(updateView);
@@ -93,7 +90,7 @@ $(document).ready(function () {
 function updateView() {
     if ($todo.context) {
         $('#wrapper>div:not(#providerSelection)').show();
-        $todo.context.ItemsSet.toArray(function (items) {
+        $todo.context.Todo.toArray(function (items) {
             $('#todoList').empty();
             items.forEach(function (entity) {
                 $('#todoEntryTemplate').tmpl(entity).data('entity', entity).appendTo('#todoList');
@@ -107,7 +104,7 @@ function updateView() {
 function updateViewRemote() {
     if (onlinedb) {
         $('#wrapper>div:not(#providerSelection)').show();
-        onlinedb.ItemsSet.toArray(function (items) {
+        onlinedb.Todo.toArray(function (items) {
             $('#remoteList').empty();
             items.forEach(function (entity) {
                 $('#remoteListTemplate').tmpl(entity).data('entity', entity).appendTo('#remoteList');
@@ -121,13 +118,13 @@ function updateViewRemote() {
 function synchronizeData() {
 
     $todo.context
-        .ItemsSet
+        .Todo
         .filter("it.Synchronized === false")
         .toArray(function (todoItems) {
             onlinedb.addMany(todoItems);
             onlinedb.saveChanges(function () {
                 todoItems.forEach(function (todoItem) {
-                    $todo.context.ItemsSet.attach(todoItem);
+                    $todo.context.Todo.attach(todoItem);
                     todoItem.Synchronized = true;
                 });
                 $todo.context.saveChanges(function () {
