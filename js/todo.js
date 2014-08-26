@@ -86,6 +86,17 @@ $(document).ready(function () {
         $todo.context.saveChanges(updateView);
     });
 
+    $('#remoteList').on('click', ':button', function (e) {
+        var cmd = $(this).val();
+        var entry = $(this).parent().data('entity');
+        switch (cmd) {
+            case 'delete':
+                onlinedb.Todo.remove(entry);
+                break;
+        }
+        onlinedb.saveChanges(updateViewRemote);
+    });
+
 });
 
 function updateView() {
