@@ -17,10 +17,10 @@ function onDeviceReady() {
     });
 
     //debugger;
-    
+    // http://localhost:49375/odata
     onlinedb = new $todo.Types.ToDoContext({
         name: 'oData',
-        oDataServiceHost: 'http://localhost/WebAPIDataCollector/odata' // http://localhost:49375/odata
+        oDataServiceHost: 'http://gpa/WebAPIDataCollector/odata'
     });
     onlinedb.onReady({
         success: updateViewRemote,
