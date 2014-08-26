@@ -37,8 +37,6 @@
     <script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
     <script type="text/javascript" src="js/datajs-1.0.3.js"></script>
     <script type="text/javascript" src="js/jaydata.js"></script>
-    <!--    <script type="text/javascript" src="jaydataproviders/SqLiteProvider.js"></script>
-    <script type="text/javascript" src="jaydataproviders/oDataProvider.js"></script>-->
     <script type="text/javascript" src="js/todo.js"></script>
 
     <script id="todoEntryTemplate" type="text/html">
@@ -67,30 +65,24 @@
 
 </head>
 <body>
-
-    <div>
-        <input id="txtNew" type="text" class="reset-m" />
-        <button id="btnAdd" class="btn btn-small">Add</button>
-        <button id="btnClear" class="btn btn-small">Clear</button>
-    </div>
+    <h1>JayData Todo-List</h1>
     <div id="message"></div>
-    <div>Lista Local</div>
+    <hr />
+    <div>
+        <h2 style="display: inline-block">Lista Local</h2>
+        <a href="#" id="sync">Sincronizar</a>
+    </div>
+    <div>
+        <input id="txtNew" type="text" class="reset-m" style="width: 100%;" />
+        <button id="btnAdd" class="btn btn-small">Agregar</button>
+        <button id="btnClear" class="btn btn-small">Limpiar lista local</button>
+    </div>
     <div id="todoList"></div>
-    <div><a href="#" id="sync">Synchronize</a></div>
-    <div><a href="#" id="refresh">Refresh Remote List</a></div>
-    <div>Lista Remota</div>
+    <hr />
+    <div>
+        <h2 style="display: inline-block">Lista Remota</h2>
+        <a href="#" id="refresh">Actualizar</a>
+    </div>
     <div id="remoteList"></div>
-    <!-- <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
-        </div>-->
-    <!--<script type="text/javascript" src="cordova.js"></script>-->
-    <!-- <script type="text/javascript" src="js/index.js"></script>
-    <script type="text/javascript">
-        app.initialize();
-    </script>-->
 </body>
 </html>
