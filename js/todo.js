@@ -20,7 +20,7 @@ function onDeviceReady() {
     // http://localhost:49375/odata
     onlinedb = new $todo.Types.ToDoContext({
         name: 'oData',
-        oDataServiceHost: 'http://gpa/WebAPIDataCollector/odata'
+        oDataServiceHost: 'http://gpa.cnet/WebAPIDataCollector/odata'
     });
     onlinedb.onReady({
         success: updateViewRemote,
