@@ -34,6 +34,7 @@ function onDeviceReady() {
     //});
 
     $("#sync").click(synchronizeData);
+    $("#refresh").click(updateViewRemote);
 }
 
 $(document).ready(function () {
