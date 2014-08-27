@@ -38,8 +38,8 @@ function onDeviceReady() {
 
     checkConnection();
 
-    //document.addEventListener("offline", onOffline, false);
-    //document.addEventListener("online", onOnline, false);
+    document.addEventListener("offline", onOffline, false);
+    document.addEventListener("online", onOnline, false);
 }
 
 // Network info
