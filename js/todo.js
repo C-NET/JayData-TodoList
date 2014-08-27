@@ -38,8 +38,8 @@ function onDeviceReady() {
 
     checkConnection();
 
-    document.addEventListener("offline", onOffline, false);
-    document.addEventListener("online", onOnline, false);
+    //document.addEventListener("offline", onOffline, false);
+    //document.addEventListener("online", onOnline, false);
 }
 
 // Network info
@@ -65,13 +65,13 @@ function checkConnection() {
 
 function onOffline() {
     $("#networkinfo").html("");
-    $("#networkinfo").append('Offline. Connection type: ' + states[networkState]);
+    $("#networkinfo").append('Offline');
     $("#networkinfo").css('background-color', 'red');
 }
 
 function onOnline() {
     $("#networkinfo").html("");
-    $("#networkinfo").append('Online. Connection type: ' + states[networkState]);
+    $("#networkinfo").append('Online');
     $("#networkinfo").css('background-color', 'green');
 }
 
