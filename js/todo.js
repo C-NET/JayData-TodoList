@@ -1,4 +1,5 @@
 var onlinedb = onlinedb || {};
+var pendingSynchro = false;
 
 (function () {
     document.addEventListener('deviceready', onDeviceReady, false);
@@ -36,43 +37,48 @@ function onDeviceReady() {
     $("#sync").click(synchronizeData);
     $("#refresh").click(updateViewRemote);
 
-    checkConnection();
+    //checkConnection();
 
     document.addEventListener("offline", onOffline, false);
     document.addEventListener("online", onOnline, false);
 }
 
 // Network info
-function checkConnection() {
+//function checkConnection() {
 
-    if (navigator.connection == null || typeof (navigator.connection) == 'undefined')
-        return;
+//    if (navigator.connection == null || typeof (navigator.connection) == 'undefined')
+//        return;
 
-    var networkState = navigator.connection.type;
+//    var networkState = navigator.connection.type;
 
-    var states = {};
-    states[Connection.UNKNOWN] = 'Unknown connection';
-    states[Connection.ETHERNET] = 'Ethernet connection';
-    states[Connection.WIFI] = 'WiFi connection';
-    states[Connection.CELL_2G] = 'Cell 2G connection';
-    states[Connection.CELL_3G] = 'Cell 3G connection';
-    states[Connection.CELL_4G] = 'Cell 4G connection';
-    states[Connection.CELL] = 'Cell generic connection';
-    states[Connection.NONE] = 'No network connection';
+//    var states = {};
+//    states[Connection.UNKNOWN] = 'Unknown connection';
+//    states[Connection.ETHERNET] = 'Ethernet connection';
+//    states[Connection.WIFI] = 'WiFi connection';
+//    states[Connection.CELL_2G] = 'Cell 2G connection';
+//    states[Connection.CELL_3G] = 'Cell 3G connection';
+//    states[Connection.CELL_4G] = 'Cell 4G connection';
+//    states[Connection.CELL] = 'Cell generic connection';
+//    states[Connection.NONE] = 'No network connection';
 
-    $("#networkinfo").append('Connection type: ' + states[networkState]);
-}
+//    $("#networkinfo").append('Connection type: ' + states[networkState]);
+//}
 
 function onOffline() {
     $("#networkinfo").html("");
     $("#networkinfo").append('Offline');
     $("#networkinfo").css('background-color', 'red');
+    $("#networkinfo").css('color', 'white');
 }
 
 function onOnline() {
     $("#networkinfo").html("");
     $("#networkinfo").append('Online');
     $("#networkinfo").css('background-color', 'green');
+    $("#networkinfo").css('color', 'white');
+
+    if (pendingSynchro)
+        synchronizeData();
 }
 
 $(document).ready(function () {
@@ -98,6 +104,8 @@ $(document).ready(function () {
         var entity = new $todo.Types.ToDoEntry({ Id: $data.createGuid(), Data: value, Synchronized: false, CreationDateTime: now, ModificationDateTime: now, Done: false });
         $todo.context.Todo.add(entity);
         $todo.context.saveChanges(updateView);
+        //$todo.context.Todo.length(function (cnt) { alert("There are " + cnt + " person(s) in the database."); });
+        $('#btnAdd').attr("disabled", true); // TODO: por falla en comando $batch (OData) deshabilito poder sincronizar mas de un item a la vez
     });
 
     $('#btnClear').click(function () {
@@ -106,6 +114,7 @@ $(document).ready(function () {
             $todo.context.Todo.remove(entity);
         });
         $todo.context.saveChanges(updateView);
+        $('#btnAdd').attr("disabled", false);
     });
 
     $('#todoList').on('click', ':button', function (e) {
@@ -119,6 +128,7 @@ $(document).ready(function () {
                 break;
             case 'delete':
                 $todo.context.Todo.remove(entry);
+                $('#btnAdd').attr("disabled", false);
                 break;
         }
         $todo.context.saveChanges(updateView);
@@ -167,6 +177,20 @@ function updateViewRemote() {
 
 function synchronizeData() {
 
+    if (navigator.connection == null || typeof (navigator.connection) == 'undefined') {
+        $("#message").html("Sincronizaci&oacute;n pendiente");
+        pendingSynchro = true;
+        return;
+    }
+
+    var networkState = navigator.connection.type;
+
+    if (networkState == Connection.UNKNOWN || networkState == Connection.NONE) {
+        $("#message").html("Sincronizaci&oacute;n pendiente");
+        pendingSynchro = true;
+        return;
+    }
+
     $todo.context
         .Todo
         .filter("it.Synchronized === false")
@@ -181,6 +205,8 @@ function synchronizeData() {
                     updateView();
                     updateViewRemote();
                 });
+                $("#message").html("Item sincronizado");
+                pendingSynchro = false;
             });
         })
 }
