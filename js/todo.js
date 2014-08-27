@@ -38,11 +38,16 @@ function onDeviceReady() {
 
     checkConnection();
 
-
+    document.addEventListener("offline", onOffline, false);
+    document.addEventListener("online", onOnline, false);
 }
 
 // Network info
 function checkConnection() {
+
+    if (navigator.connection == null || typeof (navigator.connection) == 'undefined')
+        return;
+
     var networkState = navigator.connection.type;
 
     var states = {};
@@ -55,8 +60,19 @@ function checkConnection() {
     states[Connection.CELL] = 'Cell generic connection';
     states[Connection.NONE] = 'No network connection';
 
-    alert('Connection type: ' + states[networkState]);
     $("#networkinfo").append('Connection type: ' + states[networkState]);
+}
+
+function onOffline() {
+    $("#networkinfo").html("");
+    $("#networkinfo").append('Offline. Connection type: ' + states[networkState]);
+    $("#networkinfo").css('background-color', 'red');
+}
+
+function onOnline() {
+    $("#networkinfo").html("");
+    $("#networkinfo").append('Online. Connection type: ' + states[networkState]);
+    $("#networkinfo").css('background-color', 'green');
 }
 
 $(document).ready(function () {
