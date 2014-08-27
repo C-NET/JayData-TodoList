@@ -197,7 +197,9 @@ function synchronizeData() {
         .toArray(function (todoItems) {
             onlinedb.addMany(todoItems);
             onlinedb.saveChanges(function () {
+                $("#message").html("Item sincronizado ");
                 todoItems.forEach(function (todoItem) {
+                    $("#message").append(todoItem.Data);
                     $todo.context.Todo.attach(todoItem);
                     todoItem.Synchronized = true;
                 });
@@ -205,7 +207,6 @@ function synchronizeData() {
                     updateView();
                     updateViewRemote();
                 });
-                $("#message").html("Item sincronizado");
                 pendingSynchro = false;
             });
         })
